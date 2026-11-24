@@ -58,7 +58,7 @@ npm run build:client
 
 ## Demonstração ao vivo: o loop do agente
 
-`example/index.ts` é um agente bem simplificado, feito para mostrar o loop do agente ao vivo numa apresentação. Não tem servidor, interface nem guardrail: só o loop, com cerca de 100 linhas, usando quatro ferramentas do app (`get_weather`, `get_coordinates`, `calculate_distance` e `calculate`).
+`example/05-thinking.ts` é um agente bem simplificado, feito para mostrar o loop do agente ao vivo numa apresentação. Não tem servidor, interface nem guardrail: só o loop, com cerca de 100 linhas, usando quatro ferramentas do app (`get_weather`, `get_coordinates`, `calculate_distance` e `calculate`).
 
 ```powershell
 npm run example
@@ -96,7 +96,7 @@ flowchart TD
 
 ### Construindo passo a passo
 
-Para construir o agente diante da plateia, o mesmo agente está dividido em quatro arquivos, cada um acrescentando uma ideia. Todos são completos e rodam sozinhos:
+Para construir o agente diante da plateia, o agente está dividido em cinco arquivos, cada um acrescentando uma ideia. Todos são completos e rodam sozinhos:
 
 | Passo | Comando | O que acrescenta |
 | --- | --- | --- |
@@ -104,9 +104,9 @@ Para construir o agente diante da plateia, o mesmo agente está dividido em quat
 | `02-tool-definition.ts` | `npm run example:02` | Uma ferramenta descrita em JSON Schema. O modelo responde com `tool_use` e `stop_reason: tool_use`, e para: ele só pede a ferramenta. |
 | `03-tool-result.ts` | `npm run example:03` | O nosso código executa a ferramenta e devolve um `tool_result` com o mesmo `tool_use_id`. Uma segunda chamada traz a resposta final. |
 | `04-agent-loop.ts` | `npm run example:04` | O loop `while` com `MAX_STEPS`, várias ferramentas e tratamento de erro com `is_error`. |
-| `index.ts` | `npm run example` | A versão final: o mesmo loop com thinking adaptativo. |
+| `05-thinking.ts` | `npm run example:05` | Thinking adaptativo: o mesmo loop, mostrando o resumo do raciocínio do modelo a cada passo. `npm run example` também roda essa versão final. |
 
-Para depurar no WebStorm, use a configuração compartilhada **Agent loop example** (`.idea/runConfigurations`), coloque breakpoints em `example/index.ts` e rode em modo Debug. Cada passo também tem a sua configuração, de **Agent step 01** a **Agent step 04**. Bons pontos de parada são a chamada ao modelo, a verificação do `stop_reason` e as duas linhas `messages.push`, onde dá para ver o array `messages` crescer a cada passo.
+Para depurar no WebStorm, use as configurações compartilhadas em `.idea/runConfigurations`, de **Agent step 01** a **Agent step 05**, coloque breakpoints no arquivo do passo e rode em modo Debug. Bons pontos de parada são a chamada ao modelo, a verificação do `stop_reason` e as duas linhas `messages.push`, onde dá para ver o array `messages` crescer a cada passo.
 
 ## Configuração
 
@@ -298,7 +298,7 @@ example/
   02-tool-definition.ts     passo 2: uma ferramenta e a resposta tool_use
   03-tool-result.ts         passo 3: executar a ferramenta e devolver o tool_result
   04-agent-loop.ts          passo 4: o loop do agente
-  index.ts                  loop do agente simplificado para a demonstração ao vivo, com thinking
+  05-thinking.ts            passo 5: o loop do agente com thinking adaptativo
 scripts/
   build-client.ts           build do JavaScript com esbuild (o CSS sai do Tailwind CLI)
 public/build/               bundle gerado (não versionado)

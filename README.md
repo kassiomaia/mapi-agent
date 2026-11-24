@@ -62,7 +62,7 @@ The command builds the client bundle into `public/build` and starts the server. 
 
 ## Live demo: the agent loop
 
-`example/index.ts` is a stripped-down agent made for presenting the agent loop live. It has no server, no interface and no guardrail: just the loop, about 100 lines long, using four of the app's tools (`get_weather`, `get_coordinates`, `calculate_distance` and `calculate`).
+`example/05-thinking.ts` is a stripped-down agent made for presenting the agent loop live. It has no server, no interface and no guardrail: just the loop, about 100 lines long, using four of the app's tools (`get_weather`, `get_coordinates`, `calculate_distance` and `calculate`).
 
 ```bash
 npm run example
@@ -100,7 +100,7 @@ flowchart TD
 
 ### Building it step by step
 
-To build the agent in front of an audience, the same agent is split into four files that each add one idea. Every file is complete and runs on its own:
+To build the agent in front of an audience, it is split into five files that each add one idea. Every file is complete and runs on its own:
 
 | Step | Command | What it adds |
 | --- | --- | --- |
@@ -108,9 +108,9 @@ To build the agent in front of an audience, the same agent is split into four fi
 | `02-tool-definition.ts` | `npm run example:02` | A tool described with JSON Schema. The model answers with `tool_use` and `stop_reason: tool_use`, and stops: it only asks for the tool. |
 | `03-tool-result.ts` | `npm run example:03` | Our code runs the tool and sends a `tool_result` with the same `tool_use_id`. A second call gives the final answer. |
 | `04-agent-loop.ts` | `npm run example:04` | The `while` loop with `MAX_STEPS`, several tools and error handling with `is_error`. |
-| `index.ts` | `npm run example` | The final version: the same loop with adaptive thinking. |
+| `05-thinking.ts` | `npm run example:05` | Adaptive thinking: the same loop, printing the model's thinking summary on each step. `npm run example` also runs this final version. |
 
-To debug it in WebStorm, use the shared **Agent loop example** run configuration (`.idea/runConfigurations`), set breakpoints in `example/index.ts` and start it with Debug. Each step also has its own configuration, **Agent step 01** to **Agent step 04**. Good places to stop are the model call, the `stop_reason` check and the two `messages.push` lines, where you can watch the `messages` array grow on each step.
+To debug it in WebStorm, use the shared run configurations in `.idea/runConfigurations`, **Agent step 01** to **Agent step 05**, set breakpoints in the step's file and start it with Debug. Good places to stop are the model call, the `stop_reason` check and the two `messages.push` lines, where you can watch the `messages` array grow on each step.
 
 ## Configuration
 
@@ -207,7 +207,7 @@ example/
   02-tool-definition.ts step 2: a tool and the tool_use response
   03-tool-result.ts     step 3: running the tool and sending tool_result
   04-agent-loop.ts      step 4: the agent loop
-  index.ts              simplified agent loop for the live demo, with thinking
+  05-thinking.ts        step 5: the agent loop with adaptive thinking
 scripts/
   build-client.ts       esbuild bundle (CSS is built by the Tailwind CLI)
 public/brand/           the Mapi mascot, also used as favicon
