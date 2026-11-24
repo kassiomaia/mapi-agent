@@ -1,0 +1,23 @@
+{
+  "name": "a5-presentation-agentes-ia",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Demos didáticos: agentes de IA com a API da Anthropic e TypeScript (Bun)",
+  "scripts": {
+    "t1": "bun run 01-conceitos/index.ts",
+    "t2": "bun run 02-primeira-requisicao/index.ts",
+    "t3": "bun run 03-ferramentas/index.ts",
+    "t4": "bun run 04-loop-agentico/index.ts",
+    "t5": "bun run 05-teste-autonomia/index.ts",
+    "t6": "bun run 06-conclusoes/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.13.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.5",
+    "typescript": "^7.0.2"
+  }
+}
