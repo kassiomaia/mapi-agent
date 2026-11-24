@@ -60,6 +60,46 @@ npm start
 
 The command builds the client bundle into `public/build` and starts the server. Open [http://localhost:3000](http://localhost:3000). To build only the client, run `npm run build:client`.
 
+## Live demo: the agent loop
+
+`example/index.ts` is a stripped-down agent made for presenting the agent loop live. It has no server, no interface and no guardrail: just the loop, about 100 lines long, using four of the app's tools (`get_weather`, `get_coordinates`, `calculate_distance` and `calculate`).
+
+```bash
+npm run example
+npm run example -- "Qual a distância entre Lisboa e Madri?"
+```
+
+Adaptive thinking is on, so each step prints the model's thinking summary, its `stop_reason`, and every `tool_use` and `tool_result`, followed by the final answer:
+
+```
+── Passo 1: chamando o modelo
+   thinking    ▸ Preciso das temperaturas de Lisboa e Paris e da distância entre elas...
+   stop_reason: tool_use
+   tool_use    → get_weather({"city":"Lisboa"})
+   tool_result ← Lisboa (Portugal): 16.9 °C, observado em 2026-11-24T15:00
+   ...
+── Passo 2: chamando o modelo
+   stop_reason: end_turn
+```
+
+The code follows this flow:
+
+```mermaid
+flowchart TD
+  start([Start]) --> init["messages = [user request]<br/>steps = 0"]
+  init --> limit{steps < MAX_STEPS?}
+  limit -- No --> answer[Return the final answer text]
+  limit -- Yes --> call["Call the model<br/>(system, tools, messages)"]
+  call --> stop{"stop_reason = tool_use?"}
+  stop -- No --> answer
+  stop -- Yes --> run["Run each tool (tool_use)<br/>and collect the results (tool_result)"]
+  run --> append["messages += [response, results]<br/>steps += 1"]
+  append --> limit
+  answer --> finish([End])
+```
+
+To debug it in WebStorm, use the shared **Agent loop example** run configuration (`.idea/runConfigurations`), set breakpoints in `example/index.ts` and start it with Debug. Good places to stop are the model call, the `stop_reason` check and the two `messages.push` lines, where you can watch the `messages` array grow on each step.
+
 ## Configuration
 
 | Variable | Purpose | Default |
@@ -150,6 +190,8 @@ src/
   client/               React client (Agents Kit and Tailwind 4), bundled with esbuild
     components/         chat, generated UI, trip plan, forms and the vendored Agents Kit
     styles/             Tailwind 4 theme and map styles
+example/
+  index.ts              simplified agent loop for the live demo
 scripts/
   build-client.ts       esbuild bundle (CSS is built by the Tailwind CLI)
 public/brand/           the Mapi mascot, also used as favicon

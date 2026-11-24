@@ -8,6 +8,7 @@
   "scripts": {
     "build:client": "node --import tsx scripts/build-client.ts && tailwindcss -i src/client/styles/globals.css -o public/build/app.css --minify",
     "start": "npm run build:client && node --env-file-if-exists=.env --import tsx src/index.ts",
+    "example": "node --env-file-if-exists=.env --import tsx example/index.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.client.json"
   },
   "dependencies": {

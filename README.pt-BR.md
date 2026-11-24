@@ -56,6 +56,46 @@ Para gerar só o bundle do cliente:
 npm run build:client
 ```
 
+## Demonstração ao vivo: o loop do agente
+
+`example/index.ts` é um agente bem simplificado, feito para mostrar o loop do agente ao vivo numa apresentação. Não tem servidor, interface nem guardrail: só o loop, com cerca de 100 linhas, usando quatro ferramentas do app (`get_weather`, `get_coordinates`, `calculate_distance` e `calculate`).
+
+```powershell
+npm run example
+npm run example -- "Qual a distância entre Lisboa e Madri?"
+```
+
+O thinking adaptativo fica ligado, então a cada passo o terminal mostra o resumo do raciocínio do modelo, o `stop_reason` e cada `tool_use` e `tool_result`, e no fim a resposta:
+
+```
+── Passo 1: chamando o modelo
+   thinking    ▸ Preciso das temperaturas de Lisboa e Paris e da distância entre elas...
+   stop_reason: tool_use
+   tool_use    → get_weather({"city":"Lisboa"})
+   tool_result ← Lisboa (Portugal): 16.9 °C, observado em 2026-11-24T15:00
+   ...
+── Passo 2: chamando o modelo
+   stop_reason: end_turn
+```
+
+O código segue este fluxo:
+
+```mermaid
+flowchart TD
+  inicio([Início]) --> init["mensagens = [pedido do usuário]<br/>passos = 0"]
+  init --> limite{passos < MAX_PASSOS?}
+  limite -- Não --> resposta[Devolver o texto da resposta final]
+  limite -- Sim --> chamar["Chamar o modelo<br/>(system, tools, mensagens)"]
+  chamar --> parar{"stop_reason = tool_use?"}
+  parar -- Não --> resposta
+  parar -- Sim --> executar["Executar cada ferramenta (tool_use)<br/>e guardar os resultados (tool_result)"]
+  executar --> acumular["mensagens += [resposta, resultados]<br/>passos += 1"]
+  acumular --> limite
+  resposta --> fim([Fim])
+```
+
+Para depurar no WebStorm, use a configuração compartilhada **Agent loop example** (`.idea/runConfigurations`), coloque breakpoints em `example/index.ts` e rode em modo Debug. Bons pontos de parada são a chamada ao modelo, a verificação do `stop_reason` e as duas linhas `messages.push`, onde dá para ver o array `messages` crescer a cada passo.
+
 ## Configuração
 
 | Variável | Função | Padrão |
@@ -241,6 +281,8 @@ src/
     styles/
       globals.css           Tailwind 4, tokens do kit e estilos do mapa
       agents.css            tokens de tema do Agents Kit
+example/
+  index.ts                  loop do agente simplificado para a demonstração ao vivo
 scripts/
   build-client.ts           build do JavaScript com esbuild (o CSS sai do Tailwind CLI)
 public/build/               bundle gerado (não versionado)
