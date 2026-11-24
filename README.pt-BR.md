@@ -82,16 +82,16 @@ O código segue este fluxo:
 
 ```mermaid
 flowchart TD
-  inicio([Início]) --> init["mensagens = [pedido do usuário]<br/>passos = 0"]
-  init --> limite{passos < MAX_PASSOS?}
-  limite -- Não --> resposta[Devolver o texto da resposta final]
-  limite -- Sim --> chamar["Chamar o modelo<br/>(system, tools, mensagens)"]
-  chamar --> parar{"stop_reason = tool_use?"}
-  parar -- Não --> resposta
-  parar -- Sim --> executar["Executar cada ferramenta (tool_use)<br/>e guardar os resultados (tool_result)"]
+  inicio(["Início"]) --> preparar["mensagens = [pedido do usuário]<br/>passos = 0"]
+  preparar --> limite{"passos < MAX_PASSOS?"}
+  limite -- Não --> resposta["Devolver o texto da resposta final"]
+  limite -- Sim --> chamarModelo["Chamar o modelo<br/>(system, tools, mensagens)"]
+  chamarModelo --> verificarParada{"stop_reason = tool_use?"}
+  verificarParada -- Não --> resposta
+  verificarParada -- Sim --> executar["Executar cada ferramenta (tool_use)<br/>e guardar os resultados (tool_result)"]
   executar --> acumular["mensagens += [resposta, resultados]<br/>passos += 1"]
   acumular --> limite
-  resposta --> fim([Fim])
+  resposta --> fim(["Fim"])
 ```
 
 ### Construindo passo a passo

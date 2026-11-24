@@ -86,16 +86,16 @@ The code follows this flow:
 
 ```mermaid
 flowchart TD
-  start([Start]) --> init["messages = [user request]<br/>steps = 0"]
-  init --> limit{steps < MAX_STEPS?}
-  limit -- No --> answer[Return the final answer text]
-  limit -- Yes --> call["Call the model<br/>(system, tools, messages)"]
-  call --> stop{"stop_reason = tool_use?"}
-  stop -- No --> answer
-  stop -- Yes --> run["Run each tool (tool_use)<br/>and collect the results (tool_result)"]
-  run --> append["messages += [response, results]<br/>steps += 1"]
-  append --> limit
-  answer --> finish([End])
+  loopStart(["Start"]) --> setup["messages = [user request]<br/>steps = 0"]
+  setup --> checkLimit{"steps < MAX_STEPS?"}
+  checkLimit -- No --> finalAnswer["Return the final answer text"]
+  checkLimit -- Yes --> modelCall["Call the model<br/>(system, tools, messages)"]
+  modelCall --> checkStop{"stop_reason = tool_use?"}
+  checkStop -- No --> finalAnswer
+  checkStop -- Yes --> runTools["Run each tool (tool_use)<br/>and collect the results (tool_result)"]
+  runTools --> appendMessages["messages += [response, results]<br/>steps += 1"]
+  appendMessages --> checkLimit
+  finalAnswer --> loopEnd(["End"])
 ```
 
 ### Building it step by step
@@ -125,8 +125,6 @@ To debug it in WebStorm, use the shared run configurations in `.idea/runConfigur
 | `PORT` | HTTP and WebSocket port | `3000` |
 | `TAVILY` | Tavily API key, used by `search_flights` and `plan_trip` | without it, flight search returns an error |
 | `WIKIMEDIA_CONTACT` | Email or website sent in the User-Agent to the Wikimedia APIs | unset (10 requests per minute limit) |
-
-`.env` is ignored by git. Never commit real keys.
 
 ## How it works
 
