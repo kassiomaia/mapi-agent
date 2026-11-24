@@ -2,7 +2,9 @@ import { z } from "zod";
 import { collectSources, composeTripPlan } from "../planner/compose.js";
 import { createProgressTracker, type ProgressTracker } from "../planner/progress.js";
 import { COMPOSE_STEP, ITEM_PHOTOS_STEP, PLAN_STEPS, researchTrip } from "../planner/research.js";
+import { assignPhotos, itemTitles } from "../planner/photo-assignment.js";
 import type { PlanTripInput, TripPlan, TripPlanContent } from "../planner/types.js";
+import type { CityPhoto } from "../services/types.js";
 import { fetchWikipediaPhotos } from "../services/wikimedia.js";
 import { defineTool } from "./define-tool.js";
 import type { ToolContext } from "./types.js";
@@ -31,29 +33,29 @@ async function planTrip(input: PlanTripInput, context: ToolContext): Promise<Tri
     () => composeTripPlan(context.client, context.model, research, context.signal),
     (plan) => `${plan.itinerary.length} dias de roteiro`,
   );
-  const itemPhotos = await findItemPhotos(content, research.destination.city, tracker);
-  return { research, content, itemPhotos, sources: collectSources(research) };
+  const photosByTitle = await findItemPhotos(content, research.destination.city, tracker);
+  const { itemPhotos, gallery } = assignPhotos(content, photosByTitle, research.photos);
+  return { research: { ...research, photos: gallery }, content, itemPhotos, sources: collectSources(research) };
 }
 
 async function findItemPhotos(
   content: TripPlanContent,
   city: string,
   tracker: ProgressTracker,
-): Promise<TripPlan["itemPhotos"]> {
-  const titles = [...content.itinerary, ...content.attractions, ...content.food, ...content.neighborhoods].map((item) => item.wikipediaTitle);
+): Promise<ReadonlyMap<string, CityPhoto>> {
+  const titles = itemTitles(content);
   if (titles.length === 0) {
     tracker.skip(ITEM_PHOTOS_STEP.id, "sem itens com foto no plano");
-    return {};
+    return new Map();
   }
   try {
-    const photos = await tracker.track(
+    return await tracker.track(
       ITEM_PHOTOS_STEP.id,
       () => fetchWikipediaPhotos(titles, city),
       (found) => `${found.size} de ${titles.length} fotos`,
     );
-    return Object.fromEntries(photos);
   } catch {
-    return {};
+    return new Map();
   }
 }
 

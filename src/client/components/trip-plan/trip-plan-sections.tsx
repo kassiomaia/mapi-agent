@@ -2,6 +2,7 @@ import { ArrowUpRight, BedDouble, CalendarHeart, Lightbulb, MapPinned, Moon, Sun
 import { useState, type ReactNode } from "react";
 import { cn } from "@/components/beui/lib/utils";
 import type { TripPlanBlock } from "../../../agents/generative-ui/types.js";
+import { photoKey } from "../../../agents/planner/photo-keys.js";
 import type { CityPhoto } from "../../../agents/services/types.js";
 import { BentoGrid, BentoTile, bentoSpans } from "./bento.js";
 
@@ -69,7 +70,7 @@ export function ItinerarySection({ itinerary, photos }: { itinerary: Content["it
               Dia {day.day}: {day.title}
             </h4>
             <div className="flex items-start gap-3 sm:gap-4">
-              <DayPhoto name={day.title} photo={photos[day.wikipediaTitle]} />
+              <DayPhoto name={day.title} photo={photos[photoKey("itinerary", index)]} />
               <dl className="flex min-w-0 flex-1 flex-col gap-1.5">
                 {periods.map((period) => (
                   <div key={period.key} className="grid text-sm leading-6 sm:grid-cols-[5.5rem_1fr] sm:gap-2">
@@ -102,7 +103,7 @@ export function AttractionsSection({ attractions, photos }: { attractions: Conte
           <BentoTile
             key={attraction.name}
             name={attraction.name}
-            photo={photos[attraction.wikipediaTitle]}
+            photo={photos[photoKey("attractions", index)]}
             span={spans[index] ?? { columns: 2, rows: 1 }}
             featured={featured}
             tone="lagoon"
@@ -137,7 +138,7 @@ export function FoodSection({ food, photos }: { food: Content["food"]; photos: P
         <BentoTile
           key={item.name}
           name={item.name}
-          photo={photos[item.wikipediaTitle]}
+          photo={photos[photoKey("food", index)]}
           span={spans[index] ?? { columns: 2, rows: 1 }}
           featured={index === 0}
           mirrored
@@ -162,7 +163,7 @@ export function StaySection({ neighborhoods, photos }: { neighborhoods: Content[
         <BentoTile
           key={place.name}
           name={place.name}
-          photo={photos[place.wikipediaTitle]}
+          photo={photos[photoKey("neighborhoods", index)]}
           span={spans[index] ?? { columns: 2, rows: 1 }}
           featured={index === 0}
           tone="island"

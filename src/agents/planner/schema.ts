@@ -22,7 +22,8 @@ export const tripPlanContentSchema = z.object({
         afternoon: text,
         evening: text,
         wikipediaTitle: text.describe(
-          "Título do artigo na Wikipedia em inglês sobre o lugar principal do dia, para buscar a foto, por exemplo: Alfama, Sintra, Trastevere",
+          "Título do artigo na Wikipedia em inglês sobre o lugar principal do dia, para buscar a foto, por exemplo: Alfama, Sintra, Trastevere. " +
+            "Use um lugar específico e diferente em cada dia, nunca o nome da própria cidade nem um lugar já usado em atrações, comida ou bairros",
         ),
       }),
     )
