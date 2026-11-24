@@ -10,6 +10,14 @@ The project is also a teaching demo of how AI agents work. Every core concept li
 
 The agent's persona, prompts and interface are in Brazilian Portuguese; the code is in English.
 
+![A trip plan for Lisbon: cover photo, a boarding-pass style ticket from São Paulo and a summary of the trip](docs/screenshots/trip-plan.webp)
+
+## Screenshots
+
+| Start screen | Attractions in a bento grid | Day-by-day itinerary |
+| --- | --- | --- |
+| ![Start screen with the Mapi mascot, a dotted route and trip ideas](docs/screenshots/start.webp) | ![Attractions tab of a Lisbon plan, with photo tiles and the featured São Jorge Castle](docs/screenshots/attractions.webp) | ![Itinerary tab with a photo and the morning, afternoon and evening plan for each day](docs/screenshots/itinerary.webp) |
+
 ## Features
 
 | Tool | What it does | Data source |

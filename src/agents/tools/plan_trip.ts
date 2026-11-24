@@ -31,11 +31,15 @@ async function planTrip(input: PlanTripInput, context: ToolContext): Promise<Tri
     () => composeTripPlan(context.client, context.model, research, context.signal),
     (plan) => `${plan.itinerary.length} dias de roteiro`,
   );
-  const itemPhotos = await findItemPhotos(content, tracker);
+  const itemPhotos = await findItemPhotos(content, research.destination.city, tracker);
   return { research, content, itemPhotos, sources: collectSources(research) };
 }
 
-async function findItemPhotos(content: TripPlanContent, tracker: ProgressTracker): Promise<TripPlan["itemPhotos"]> {
+async function findItemPhotos(
+  content: TripPlanContent,
+  city: string,
+  tracker: ProgressTracker,
+): Promise<TripPlan["itemPhotos"]> {
   const titles = [...content.itinerary, ...content.attractions, ...content.food, ...content.neighborhoods].map((item) => item.wikipediaTitle);
   if (titles.length === 0) {
     tracker.skip(ITEM_PHOTOS_STEP.id, "sem itens com foto no plano");
@@ -44,7 +48,7 @@ async function findItemPhotos(content: TripPlanContent, tracker: ProgressTracker
   try {
     const photos = await tracker.track(
       ITEM_PHOTOS_STEP.id,
-      () => fetchWikipediaPhotos(titles),
+      () => fetchWikipediaPhotos(titles, city),
       (found) => `${found.size} de ${titles.length} fotos`,
     );
     return Object.fromEntries(photos);

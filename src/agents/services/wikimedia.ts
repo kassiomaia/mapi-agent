@@ -285,13 +285,16 @@ async function searchLeadImage(query: string): Promise<string | undefined> {
   return response.query?.pages[0]?.pageimage;
 }
 
-export async function fetchWikipediaPhotos(titles: ReadonlyArray<string>): Promise<ReadonlyMap<string, CityPhoto>> {
+export async function fetchWikipediaPhotos(
+  titles: ReadonlyArray<string>,
+  searchContext?: string,
+): Promise<ReadonlyMap<string, CityPhoto>> {
   const unique = [...new Set(titles.map((title) => title.trim()).filter((title) => title !== ""))];
   if (unique.length === 0) return new Map();
 
   const files = new Map(await fetchLeadImages(unique));
   const missing = unique.filter((title) => !files.has(title)).slice(0, MAX_TITLE_SEARCHES);
-  const found = await Promise.all(missing.map(async (title) => [title, await searchLeadImage(title)] as const));
+  const found = await Promise.all(missing.map(async (title) => [title, await searchLeadImage(searchContext ? `${title} ${searchContext}` : title)] as const));
   for (const [title, file] of found) if (file) files.set(title, file);
 
   const fileNames = [...new Set([...files.values()].map(normalizeFileName))];

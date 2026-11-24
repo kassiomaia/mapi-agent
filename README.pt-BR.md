@@ -4,6 +4,12 @@
 
 [English](README.md) | **Português**
 
+![Plano de viagem para Lisboa: foto de capa, bilhete saindo de São Paulo e resumo da viagem](docs/screenshots/trip-plan.webp)
+
+| Tela inicial | Atrações em bento grid | Roteiro dia a dia |
+| --- | --- | --- |
+| ![Tela inicial com o mascote Mapi, a rota pontilhada e ideias de viagem](docs/screenshots/start.webp) | ![Aba de atrações de um plano para Lisboa, com fotos e o Castelo de São Jorge em destaque](docs/screenshots/attractions.webp) | ![Aba de roteiro com foto e programação de manhã, tarde e noite de cada dia](docs/screenshots/itinerary.webp) |
+
 Agente que demonstra, na própria implementação, os conceitos de agentes de IA: chamada à Messages API, definição de ferramentas com JSON Schema, execução local de `tool_use`, loop agêntico, limite de passos, guardrail de escopo e UI gerada pelo agente. O servidor usa Hono, a interface é um cliente React com componentes do [Agents Kit](https://agents-ui.github.io/agents-kit/) e Tailwind CSS 4, e as respostas chegam por WebSocket.
 
 ## Persona e interface
