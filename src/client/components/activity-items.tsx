@@ -8,6 +8,7 @@ import {
   NotebookPen,
   Plane,
   Route,
+  SquareFunction,
   Wrench,
 } from "lucide-react";
 import type { ReactNode } from "react";
@@ -26,6 +27,7 @@ const toolPresentation: Readonly<Record<string, ToolPresentation>> = {
   get_city_photos: { label: "Buscou fotos", icon: <Images className="size-4" /> },
   search_flights: { label: "Pesquisou passagens", icon: <Plane className="size-4" /> },
   plan_trip: { label: "Montou o plano da viagem", icon: <NotebookPen className="size-4" /> },
+  run_javascript: { label: "Calculou na sandbox", icon: <SquareFunction className="size-4" /> },
   render_ui: { label: "Montou um resumo", icon: <LayoutTemplate className="size-4" /> },
 };
 
@@ -45,7 +47,7 @@ export function toActivityItems(entries: ReadonlyArray<ActivityEntry>): AgentAct
 
     const { label, icon } = presentationOf(entry.name);
     const detail =
-      entry.output === undefined ? (
+      entry.output === undefined || (entry.name === "run_javascript" && !entry.isError) ? (
         describeToolInput(entry.name, entry.input)
       ) : entry.isError ? (
         <span className="text-destructive">{firstLine(entry.output)}</span>

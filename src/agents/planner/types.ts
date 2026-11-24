@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { CityPhoto, Forecast, WeatherOutlookData, WebPage } from "../services/types.js";
+import type { CityPhoto, Coordinates, Forecast, WeatherOutlookData, WebPage } from "../services/types.js";
 import type { tripPlanContentSchema } from "./schema.js";
 
 export type TripPlanContent = z.output<typeof tripPlanContentSchema>;
@@ -63,5 +63,6 @@ export type TripPlan = Readonly<{
   research: TripResearch;
   content: TripPlanContent;
   itemPhotos: Readonly<Record<string, CityPhoto>>;
+  itemCoordinates: Readonly<Record<string, Coordinates>>;
   sources: ReadonlyArray<TripSource>;
 }>;

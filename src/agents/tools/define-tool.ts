@@ -25,7 +25,7 @@ export function defineTool<InputSchema extends z.ZodType, Output>(
         throw new Error(`Invalid input for ${tool.name}: ${validation.error.message}`);
       }
       const output = await tool.execute(validation.data, context);
-      return { text: tool.formatOutput(output), ui: tool.present?.(output) };
+      return { text: tool.formatOutput(output), ui: tool.present?.(output), output, isError: tool.isError?.(output) ?? false };
     },
   };
 }

@@ -15,6 +15,7 @@ import { MapView } from "./map-view.js";
 import { TripPlanView } from "./trip-plan/trip-plan-view.js";
 import { WeatherOutlookView } from "./weather-outlook-view.js";
 import { WebResultsView } from "./web-results-view.js";
+import { CodeRunView } from "./code-run-view.js";
 
 type MeterBlock = Extract<UiLeafBlock, { type: "meter" }>;
 type TabsBlock = Extract<UiBlock, { type: "tabs" }>;
@@ -169,6 +170,8 @@ function BlockView({ block }: { block: UiBlock }) {
       return <TripDetailsForm block={block} />;
     case "weather_outlook":
       return <WeatherOutlookView block={block} />;
+    case "code_run":
+      return <CodeRunView block={block} />;
     default:
       return <LeafBlockView block={block} />;
   }

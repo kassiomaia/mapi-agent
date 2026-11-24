@@ -6,6 +6,7 @@ import { getCoordinatesTool } from "./get_coordinates.js";
 import { getForecastTool } from "./get_forecast.js";
 import { getWeatherTool } from "./get_weather.js";
 import { planTripTool } from "./plan_trip.js";
+import { runJavascriptTool } from "./run_javascript.js";
 import { searchFlightsTool } from "./search_flights.js";
 import type { RegisteredTool, ToolContext, ToolExecution } from "./types.js";
 
@@ -18,6 +19,7 @@ const registeredTools: ReadonlyArray<RegisteredTool> = [
   getCityPhotosTool,
   searchFlightsTool,
   planTripTool,
+  runJavascriptTool,
 ];
 
 export const tools: Anthropic.Tool[] = registeredTools.map((tool) => tool.definition);

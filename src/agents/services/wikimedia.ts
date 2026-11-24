@@ -1,5 +1,6 @@
 import { z } from "zod";
-import type { CityPhoto } from "./types.js";
+import { geodesicDistanceKm } from "./geodesy.js";
+import type { CityPhoto, Coordinates } from "./types.js";
 
 const CLIENT_NAME = "mapi-agent-bot/1.0";
 const THUMBNAIL_WIDTH = 960;
@@ -337,3 +338,53 @@ export async function fetchCityPhotos(
   }
   return (await photos).slice(0, limit);
 }
+
+const coordinatesResponseSchema = z.object({
+  query: z
+    .object({
+      normalized: z.array(z.object({ from: z.string(), to: z.string() })).optional(),
+      redirects: z.array(z.object({ from: z.string(), to: z.string() })).optional(),
+      pages: z.array(
+        z.object({
+          title: z.string(),
+          coordinates: z.array(z.object({ lat: z.number(), lon: z.number() })).optional(),
+        }),
+      ),
+    })
+    .optional(),
+});
+
+// Real coordinates of Wikipedia articles, for example attractions of a trip plan.
+// Titles without coordinates, or too far from `near`, are left out.
+export async function fetchWikipediaCoordinates(
+  titles: ReadonlyArray<string>,
+  near: Coordinates,
+  maxDistanceKm: number,
+): Promise<ReadonlyMap<string, Coordinates>> {
+  const unique = [...new Set(titles.map((title) => title.trim()).filter((title) => title !== ""))];
+  if (unique.length === 0) return new Map();
+  const response = await fetchWikimedia(
+    apiUrl("en.wikipedia.org", { action: "query", titles: unique.join("|"), prop: "coordinates", redirects: "1" }),
+    coordinatesResponseSchema,
+  );
+  const query = response.query;
+  const rename = new Map([...(query?.normalized ?? []), ...(query?.redirects ?? [])].map(({ from, to }) => [from, to]));
+  const byTitle = new Map(
+    (query?.pages ?? []).flatMap((page) => {
+      const first = page.coordinates?.[0];
+      return first ? [[page.title, { latitude: first.lat, longitude: first.lon }] as const] : [];
+    }),
+  );
+  const resolve = (title: string): string => {
+    let current = title;
+    for (let hops = 0; hops < 3 && rename.has(current); hops++) current = rename.get(current) ?? current;
+    return current;
+  };
+  return new Map(
+    unique.flatMap((title) => {
+      const point = byTitle.get(resolve(title));
+      return point && geodesicDistanceKm(point, near) <= maxDistanceKm ? [[title, point] as const] : [];
+    }),
+  );
+}
+

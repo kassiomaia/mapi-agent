@@ -27,6 +27,7 @@ export function describeToolInput(name: string, input: unknown): string {
     const period = [input.startDate, input.endDate].filter((date) => typeof date === "string").join(" a ");
     return period ? `${input.city}, ${period}` : input.city;
   }
+  if (name === "run_javascript" && typeof input.goal === "string") return input.goal;
   if (typeof input.city === "string") return input.city;
   if (Array.isArray(input.cities)) return input.cities.map(String).join(", ");
   return JSON.stringify(input);

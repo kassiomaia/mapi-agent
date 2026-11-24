@@ -4,10 +4,13 @@ import { createProgressTracker, type ProgressTracker } from "../planner/progress
 import { COMPOSE_STEP, ITEM_PHOTOS_STEP, PLAN_STEPS, researchTrip } from "../planner/research.js";
 import { assignPhotos, itemTitles } from "../planner/photo-assignment.js";
 import type { PlanTripInput, TripPlan, TripPlanContent } from "../planner/types.js";
-import type { CityPhoto } from "../services/types.js";
-import { fetchWikipediaPhotos } from "../services/wikimedia.js";
+import { photoKey } from "../planner/photo-keys.js";
+import type { CityPhoto, Coordinates } from "../services/types.js";
+import { fetchWikipediaCoordinates, fetchWikipediaPhotos } from "../services/wikimedia.js";
 import { defineTool } from "./define-tool.js";
 import type { ToolContext } from "./types.js";
+
+const MAX_PLACE_DISTANCE_KM = 150;
 
 const inputSchema = z.object({
   destination: z.string().trim().min(1).describe("Cidade de destino, por exemplo: Lisboa"),
@@ -33,9 +36,33 @@ async function planTrip(input: PlanTripInput, context: ToolContext): Promise<Tri
     () => composeTripPlan(context.client, context.model, research, context.signal),
     (plan) => `${plan.itinerary.length} dias de roteiro`,
   );
-  const photosByTitle = await findItemPhotos(content, research.destination.city, tracker);
+  const [photosByTitle, itemCoordinates] = await Promise.all([
+    findItemPhotos(content, research.destination.city, tracker),
+    findItemCoordinates(content, research.destination),
+  ]);
   const { itemPhotos, gallery } = assignPhotos(content, photosByTitle, research.photos);
-  return { research: { ...research, photos: gallery }, content, itemPhotos, sources: collectSources(research) };
+  return { research: { ...research, photos: gallery }, content, itemPhotos, itemCoordinates, sources: collectSources(research) };
+}
+
+// Real coordinates of the places in the plan, used by run_javascript for routes and distances.
+async function findItemCoordinates(content: TripPlanContent, destination: Coordinates): Promise<TripPlan["itemCoordinates"]> {
+  const sections = (["attractions", "neighborhoods", "itinerary"] as const).map((section) => ({
+    section,
+    titles: content[section].map((item) => item.wikipediaTitle),
+  }));
+  try {
+    const byTitle = await fetchWikipediaCoordinates(sections.flatMap(({ titles }) => titles), destination, MAX_PLACE_DISTANCE_KM);
+    return Object.fromEntries(
+      sections.flatMap(({ section, titles }) =>
+        titles.flatMap((title, index) => {
+          const point = byTitle.get(title.trim());
+          return point ? [[photoKey(section, index), point] as const] : [];
+        }),
+      ),
+    );
+  } catch {
+    return {};
+  }
 }
 
 async function findItemPhotos(

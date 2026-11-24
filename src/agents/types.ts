@@ -1,6 +1,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import type AnthropicBedrock from "@anthropic-ai/bedrock-sdk";
 import type { UiSpec } from "./generative-ui/types.js";
+import type { ToolRecord } from "./tools/types.js";
 
 export type Provider = "anthropic" | "bedrock";
 
@@ -56,6 +57,7 @@ export type AgentOptions = Readonly<{
   maxSteps: number;
   onEvent: (event: AgentEvent) => void;
   signal?: AbortSignal | undefined;
+  toolResults?: ToolRecord[] | undefined;
 }>;
 
 export type ChatOptions = Readonly<{

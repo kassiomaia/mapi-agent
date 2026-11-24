@@ -86,6 +86,25 @@ export type WeatherOutlookBlock = WeatherOutlookData &
     country: string;
   }>;
 
+export type CodeRunCell = string | number | boolean | null;
+
+export type CodeRunDisplay =
+  | Readonly<{ kind: "table"; columns: ReadonlyArray<string>; rows: ReadonlyArray<ReadonlyArray<CodeRunCell>> }>
+  | Readonly<{ kind: "stats"; items: ReadonlyArray<Readonly<{ label: string; value: CodeRunCell }>> }>
+  | Readonly<{ kind: "list"; items: ReadonlyArray<string> }>
+  | Readonly<{ kind: "json"; text: string }>;
+
+export type CodeRunBlock = Readonly<{
+  type: "code_run";
+  goal: string;
+  code: string;
+  status: "ok" | "error";
+  durationMs: number;
+  logs: ReadonlyArray<string>;
+  error?: string | undefined;
+  display?: CodeRunDisplay | undefined;
+}>;
+
 export type UiBlock =
   | ModelUiBlock
   | WeatherOutlookBlock
@@ -93,7 +112,8 @@ export type UiBlock =
   | GalleryBlock
   | WebResultsBlock
   | TripPlanBlock
-  | TripDetailsFormBlock;
+  | TripDetailsFormBlock
+  | CodeRunBlock;
 
 export type UiSpec = Readonly<{
   title?: string | undefined;

@@ -3,6 +3,7 @@ import { runAgent } from "./agent.js";
 import { createChatContext } from "./context/chat-context.js";
 import { extractNextStep } from "./decisions/next-step.js";
 import { checkScope } from "./guardrails/scope.js";
+import type { ToolRecord } from "./tools/types.js";
 import type { AgentEvent, AgentResult, Chat, ChatOptions, NextStep } from "./types.js";
 
 const OUT_OF_SCOPE_TEXT =
@@ -12,6 +13,7 @@ const OUT_OF_SCOPE_TEXT =
 export function createChat(options: ChatOptions): Chat {
   const conversation: Anthropic.MessageParam[] = [];
   const context = createChatContext();
+  const toolResults: ToolRecord[] = [];
 
   return {
     ask: async (prompt, onEvent, signal) => {
@@ -52,7 +54,7 @@ export function createChat(options: ChatOptions): Chat {
       };
 
       try {
-        const result = await runAgent(conversation, { ...options, onEvent: relay, signal });
+        const result = await runAgent(conversation, { ...options, onEvent: relay, signal, toolResults });
         context.recordTurn(prompt, true);
         if (result.stoppedByLimit) return result;
         return { ...result, nextStep: await findNextStep(options, prompt, result.text, context.describe(), signal) };

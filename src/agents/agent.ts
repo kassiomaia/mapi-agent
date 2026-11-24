@@ -6,6 +6,7 @@ import {
 } from "./forms/trip-details-tool.js";
 import { parseUiSpec, RENDER_UI_TOOL_NAME, renderUiTool } from "./generative-ui/render-ui-tool.js";
 import { runTool, tools } from "./tools/index.js";
+import { RUN_JAVASCRIPT_TOOL_NAME } from "./tools/run_javascript.js";
 import type { ToolContext } from "./tools/types.js";
 import type { AgentOptions, AgentResult } from "./types.js";
 
@@ -45,6 +46,14 @@ const BASE_SYSTEM_PROMPT =
   "A ferramenta search_flights já exibe as páginas encontradas em uma lista de links; não chame render_ui para repeti-las. " +
   "Resuma em poucas frases a faixa de preços citada e onde ela aparece, e deixe claro que são preços encontrados na web, " +
   "que podem estar desatualizados, e não uma cotação. Converta datas relativas, como 'em dezembro', para AAAA-MM-DD a partir da data de hoje. " +
+  "Para qualquer conta com vários números, datas, distâncias ou moedas, use run_javascript em vez de calcular de cabeça, " +
+  "e use os números que ela devolver. Para uma única operação entre dois números, use calculate. " +
+  "Antes, garanta que os dados existem: se a conta depende de passagens, clima ou plano que ainda não foram buscados nesta conversa, " +
+  "chame a ferramenta de busca primeiro. Valores que o usuário disse no chat, como número de pessoas ou orçamento, vão no campo input. " +
+  "Não use run_javascript para um único valor que já está na resposta de outra ferramenta, nem para coisas que não são cálculo. " +
+  "Se run_javascript devolver erro, leia a mensagem, corrija o código e tente de novo. " +
+  "run_javascript já exibe o resultado ao usuário; não chame render_ui para repeti-lo. " +
+  "Depois dela, explique o resultado em duas ou três frases e diga as premissas usadas, como número de noites, câmbio ou se a passagem é ida e volta. " +
   "Não responda com texto formatado em Markdown. Use somente texto puro.";
 
 function systemPrompt(): string {
@@ -67,6 +76,7 @@ function toolContext(block: Anthropic.ToolUseBlock, options: AgentOptions): Tool
     signal: options.signal,
     reportProgress: (progress) =>
       options.onEvent({ type: "progress", toolUseId: block.id, name: block.name, progress }),
+    toolResults: options.toolResults,
   };
 }
 
@@ -102,11 +112,19 @@ async function executeToolCall(
   onEvent({ type: "tool", name: block.name, input: block.input });
   try {
     const execution = await runTool(block.name, block.input, toolContext(block, options));
-    onEvent({ type: "result", name: block.name, output: execution.text, isError: false });
+    onEvent({ type: "result", name: block.name, output: execution.text, isError: execution.isError });
     if (execution.ui) {
       onEvent({ type: "ui", spec: execution.ui });
     }
-    return { type: "tool_result", tool_use_id: block.id, content: execution.text };
+    if (!execution.isError && block.name !== RUN_JAVASCRIPT_TOOL_NAME) {
+      options.toolResults?.push({ tool: block.name, input: block.input, output: execution.output });
+    }
+    return {
+      type: "tool_result",
+      tool_use_id: block.id,
+      content: execution.text,
+      ...(execution.isError ? { is_error: true } : {}),
+    };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     onEvent({ type: "result", name: block.name, output: message, isError: true });

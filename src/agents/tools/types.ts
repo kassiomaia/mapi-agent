@@ -9,6 +9,14 @@ export type ToolContext = Readonly<{
   model: string;
   signal: AbortSignal | undefined;
   reportProgress: (progress: ToolProgress) => void;
+  toolResults?: ReadonlyArray<ToolRecord> | undefined;
+}>;
+
+// Raw output of a tool that already ran in this conversation, kept on the server for run_javascript.
+export type ToolRecord = Readonly<{
+  tool: string;
+  input: unknown;
+  output: unknown;
 }>;
 
 export type Tool<InputSchema extends z.ZodType, Output> = Readonly<{
@@ -18,11 +26,14 @@ export type Tool<InputSchema extends z.ZodType, Output> = Readonly<{
   execute: (input: z.output<InputSchema>, context: ToolContext) => Promise<Output>;
   formatOutput: (output: Output) => string;
   present?: (output: Output) => UiSpec;
+  isError?: (output: Output) => boolean;
 }>;
 
 export type ToolExecution = Readonly<{
   text: string;
   ui: UiSpec | undefined;
+  output: unknown;
+  isError: boolean;
 }>;
 
 export type RegisteredTool = Readonly<{
