@@ -236,4 +236,4 @@ npm run typecheck
 
 ## License
 
-[MIT](LICENSE). The vendored Agents Kit components keep their own MIT license in `src/client/components/beui/LICENSE`.
+[MIT](LICENSE).
