@@ -1,9 +1,9 @@
 {
-  "name": "a5-presentation-agentes-ia",
+  "name": "mapi-agent",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Basic agent using the Anthropic API (Bedrock or direct API) in TypeScript with Node.js",
+  "description": "Mapi, agente pessoal de planejamento de férias com a API da Anthropic (Bedrock ou API direta), em TypeScript com Node.js",
   "scripts": {
     "build:client": "node --import tsx scripts/build-client.ts && tailwindcss -i src/client/styles/globals.css -o public/build/app.css --minify",
     "start": "npm run build:client && node --env-file-if-exists=.env --import tsx src/index.ts",

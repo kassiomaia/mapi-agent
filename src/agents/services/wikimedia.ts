@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { CityPhoto } from "./types.js";
 
-const CLIENT_NAME = "a5-presentation-agent-demo-bot/1.0";
+const CLIENT_NAME = "mapi-agent-bot/1.0";
 const THUMBNAIL_WIDTH = 960;
 const MIN_ORIGINAL_WIDTH = 800;
 const DESCRIPTION_MAX_LENGTH = 180;
