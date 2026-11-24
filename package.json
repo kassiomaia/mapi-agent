@@ -9,6 +9,10 @@
     "build:client": "node --import tsx scripts/build-client.ts && tailwindcss -i src/client/styles/globals.css -o public/build/app.css --minify",
     "start": "npm run build:client && node --env-file-if-exists=.env --import tsx src/index.ts",
     "example": "node --env-file-if-exists=.env --import tsx example/index.ts",
+    "example:01": "node --env-file-if-exists=.env --import tsx example/01-model-call.ts",
+    "example:02": "node --env-file-if-exists=.env --import tsx example/02-tool-definition.ts",
+    "example:03": "node --env-file-if-exists=.env --import tsx example/03-tool-result.ts",
+    "example:04": "node --env-file-if-exists=.env --import tsx example/04-agent-loop.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.client.json"
   },
   "dependencies": {

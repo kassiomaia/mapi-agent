@@ -94,7 +94,19 @@ flowchart TD
   resposta --> fim([Fim])
 ```
 
-Para depurar no WebStorm, use a configuração compartilhada **Agent loop example** (`.idea/runConfigurations`), coloque breakpoints em `example/index.ts` e rode em modo Debug. Bons pontos de parada são a chamada ao modelo, a verificação do `stop_reason` e as duas linhas `messages.push`, onde dá para ver o array `messages` crescer a cada passo.
+### Construindo passo a passo
+
+Para construir o agente diante da plateia, o mesmo agente está dividido em quatro arquivos, cada um acrescentando uma ideia. Todos são completos e rodam sozinhos:
+
+| Passo | Comando | O que acrescenta |
+| --- | --- | --- |
+| `01-model-call.ts` | `npm run example:01` | Uma chamada à Messages API, sem ferramentas. Perguntado sobre o clima, o modelo admite que não tem dados em tempo real. |
+| `02-tool-definition.ts` | `npm run example:02` | Uma ferramenta descrita em JSON Schema. O modelo responde com `tool_use` e `stop_reason: tool_use`, e para: ele só pede a ferramenta. |
+| `03-tool-result.ts` | `npm run example:03` | O nosso código executa a ferramenta e devolve um `tool_result` com o mesmo `tool_use_id`. Uma segunda chamada traz a resposta final. |
+| `04-agent-loop.ts` | `npm run example:04` | O loop `while` com `MAX_STEPS`, várias ferramentas e tratamento de erro com `is_error`. |
+| `index.ts` | `npm run example` | A versão final: o mesmo loop com thinking adaptativo. |
+
+Para depurar no WebStorm, use a configuração compartilhada **Agent loop example** (`.idea/runConfigurations`), coloque breakpoints em `example/index.ts` e rode em modo Debug. Cada passo também tem a sua configuração, de **Agent step 01** a **Agent step 04**. Bons pontos de parada são a chamada ao modelo, a verificação do `stop_reason` e as duas linhas `messages.push`, onde dá para ver o array `messages` crescer a cada passo.
 
 ## Configuração
 
@@ -282,7 +294,11 @@ src/
       globals.css           Tailwind 4, tokens do kit e estilos do mapa
       agents.css            tokens de tema do Agents Kit
 example/
-  index.ts                  loop do agente simplificado para a demonstração ao vivo
+  01-model-call.ts          passo 1: uma chamada ao modelo
+  02-tool-definition.ts     passo 2: uma ferramenta e a resposta tool_use
+  03-tool-result.ts         passo 3: executar a ferramenta e devolver o tool_result
+  04-agent-loop.ts          passo 4: o loop do agente
+  index.ts                  loop do agente simplificado para a demonstração ao vivo, com thinking
 scripts/
   build-client.ts           build do JavaScript com esbuild (o CSS sai do Tailwind CLI)
 public/build/               bundle gerado (não versionado)

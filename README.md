@@ -98,7 +98,19 @@ flowchart TD
   answer --> finish([End])
 ```
 
-To debug it in WebStorm, use the shared **Agent loop example** run configuration (`.idea/runConfigurations`), set breakpoints in `example/index.ts` and start it with Debug. Good places to stop are the model call, the `stop_reason` check and the two `messages.push` lines, where you can watch the `messages` array grow on each step.
+### Building it step by step
+
+To build the agent in front of an audience, the same agent is split into four files that each add one idea. Every file is complete and runs on its own:
+
+| Step | Command | What it adds |
+| --- | --- | --- |
+| `01-model-call.ts` | `npm run example:01` | One call to the Messages API, without tools. Asked about the weather, the model admits it has no real-time data. |
+| `02-tool-definition.ts` | `npm run example:02` | A tool described with JSON Schema. The model answers with `tool_use` and `stop_reason: tool_use`, and stops: it only asks for the tool. |
+| `03-tool-result.ts` | `npm run example:03` | Our code runs the tool and sends a `tool_result` with the same `tool_use_id`. A second call gives the final answer. |
+| `04-agent-loop.ts` | `npm run example:04` | The `while` loop with `MAX_STEPS`, several tools and error handling with `is_error`. |
+| `index.ts` | `npm run example` | The final version: the same loop with adaptive thinking. |
+
+To debug it in WebStorm, use the shared **Agent loop example** run configuration (`.idea/runConfigurations`), set breakpoints in `example/index.ts` and start it with Debug. Each step also has its own configuration, **Agent step 01** to **Agent step 04**. Good places to stop are the model call, the `stop_reason` check and the two `messages.push` lines, where you can watch the `messages` array grow on each step.
 
 ## Configuration
 
@@ -191,7 +203,11 @@ src/
     components/         chat, generated UI, trip plan, forms and the vendored Agents Kit
     styles/             Tailwind 4 theme and map styles
 example/
-  index.ts              simplified agent loop for the live demo
+  01-model-call.ts      step 1: a single model call
+  02-tool-definition.ts step 2: a tool and the tool_use response
+  03-tool-result.ts     step 3: running the tool and sending tool_result
+  04-agent-loop.ts      step 4: the agent loop
+  index.ts              simplified agent loop for the live demo, with thinking
 scripts/
   build-client.ts       esbuild bundle (CSS is built by the Tailwind CLI)
 public/brand/           the Mapi mascot, also used as favicon

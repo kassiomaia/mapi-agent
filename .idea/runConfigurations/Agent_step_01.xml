@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Agent step 01 - model call" type="NodeJSConfigurationType" node-parameters="--env-file-if-exists=.env --import tsx" path-to-js-file="example/01-model-call.ts" working-dir="$PROJECT_DIR$">
+    <method v="2" />
+  </configuration>
+</component>
