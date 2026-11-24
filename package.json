@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Mapi, agente pessoal de planejamento de férias com a API da Anthropic (Bedrock ou API direta), em TypeScript com Node.js",
+  "license": "MIT",
   "scripts": {
     "build:client": "node --import tsx scripts/build-client.ts && tailwindcss -i src/client/styles/globals.css -o public/build/app.css --minify",
     "start": "npm run build:client && node --env-file-if-exists=.env --import tsx src/index.ts",

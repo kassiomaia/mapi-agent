@@ -259,3 +259,7 @@ O servidor e o cliente têm configurações de TypeScript separadas: `tsconfig.j
 ```powershell
 npm run typecheck
 ```
+
+## Licença
+
+[MIT](LICENSE). Os componentes copiados do Agents Kit mantêm a própria licença MIT, em `src/client/components/beui/LICENSE`.

@@ -172,3 +172,7 @@ npm run typecheck
 - Photos come from Wikimedia Commons under free licenses such as CC BY-SA, and the interface always shows the author and license with a link to the image page.
 - Map tiles come from OpenStreetMap and follow the [OSM Foundation tile usage policy](https://operations.osmfoundation.org/policies/tiles/): fine for a demo, not for heavy traffic.
 - Wikimedia limits clients without contact information in the User-Agent to 10 requests per minute. Set `WIKIMEDIA_CONTACT` to raise the limit to 200.
+
+## License
+
+[MIT](LICENSE). The vendored Agents Kit components keep their own MIT license in `src/client/components/beui/LICENSE`.
