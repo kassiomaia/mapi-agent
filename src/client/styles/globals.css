@@ -1,0 +1,170 @@
+@layer ui-sdk;
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./agents.css";
+
+@source "../";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-ink: var(--ink);
+  --color-lagoon: var(--lagoon);
+  --color-lagoon-deep: var(--lagoon-deep);
+  --color-lagoon-soft: var(--lagoon-soft);
+  --color-island: var(--island);
+  --color-island-soft: var(--island-soft);
+  --color-pin: var(--pin);
+  --color-pin-deep: var(--pin-deep);
+  --color-route: var(--route);
+}
+
+html:root,
+html.dark {
+  --ink: #1e2a38;
+  --lagoon: #22b8d8;
+  --lagoon-deep: #08708b;
+  --lagoon-soft: #d6f1f8;
+  --island: #93e08b;
+  --island-soft: #e3f6df;
+  --pin: #e9483f;
+  --pin-deep: #c7342c;
+  --route: #ffd23f;
+  --ring: var(--lagoon-deep);
+  --destructive: #c7342c;
+}
+
+@layer ui-sdk {
+  :where([data-slot][hidden]:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+@keyframes route-draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes plane-arrive {
+  from {
+    opacity: 0;
+    translate: -14px 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.route-reveal {
+  animation: route-draw 1.4s cubic-bezier(0.45, 0, 0.2, 1) 0.2s both;
+}
+
+.route-plane {
+  animation: plane-arrive 0.5s ease-out 1.4s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-reveal,
+  .route-plane {
+    animation: none;
+  }
+}
+
+.leaflet-container {
+  font: inherit;
+}
+
+.map-route-casing {
+  stroke: var(--ink);
+  stroke-linecap: round;
+}
+
+.map-route {
+  stroke: var(--route);
+  stroke-linecap: round;
+  stroke-dasharray: 0.5 9;
+}
+
+.map-city-dot {
+  stroke: var(--ink);
+  fill: var(--pin);
+}
+
+.map-distance.leaflet-tooltip {
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: none;
+  padding: 1px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.map-distance.leaflet-tooltip::before,
+.map-city.leaflet-tooltip::before {
+  display: none;
+}
+
+.map-city.leaflet-tooltip {
+  border: 0;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #ffffff;
+  box-shadow: none;
+  padding: 2px 8px;
+  font-family: var(--font-rounded), sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+}

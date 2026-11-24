@@ -1,0 +1,1 @@
+Compare a temperatura de Lisboa, Tóquio, Nova York e Xyzzyville. Calcule a média das cidades que você encontrar, usando a ferramenta de cálculo. Diga quais cidades não foram encontradas e, no fim, dê um resumo em uma frase.

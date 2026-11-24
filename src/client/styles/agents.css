@@ -1,0 +1,100 @@
+@theme inline {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-rounded), var(--font-body), ui-rounded, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", monospace;
+  --radius-chip: 8px;
+  --radius-control: 12px;
+  --radius-card: 16px;
+  --radius-window: 20px;
+}
+
+html:root {
+  --font-body: "Figtree Variable";
+  --font-rounded: "Fredoka Variable";
+  --color-background-full: #f2f9fb;
+  --color-background-primary-default: #ffffff;
+  --color-background-secondary-default: #e6f2f6;
+  --color-background-primary-hover: #eaf5f9;
+  --color-text-primary: #1e2a38;
+  --color-text-secondary: #4b5e6e;
+  --color-text-tertiary: #5a6d7d;
+  --color-border-button-default: #c9dce5;
+  --color-separator-border: #d9e8ee;
+  --font-mono-source: ui-monospace;
+}
+
+html.dark {
+  --color-background-full: oklch(0.209 0.004 264.477);
+  --color-background-primary-default: oklch(0.26 0.006 271.191);
+  --color-background-secondary-default: oklch(0.231 0.004 264.487);
+  --color-background-primary-hover: oklch(0.289 0.006 271.22);
+  --color-text-primary: oklch(0.964 0.002 247.839);
+  --color-text-secondary: oklch(0.731 0.008 260.731);
+  --color-text-tertiary: oklch(0.7 0.008 260.731);
+  --color-border-button-default: oklch(0.356 0.007 264.474);
+  --color-separator-border: oklch(0.308 0.006 258.354);
+}
+
+html:root,
+html.dark {
+  --color-border-focus-ring: var(--color-text-primary);
+  --color-tab-count-selected-background: var(--color-background-secondary-default);
+  --background: var(--color-background-full);
+  --foreground: var(--color-text-primary);
+  --card: var(--color-background-primary-default);
+  --card-foreground: var(--color-text-primary);
+  --popover: var(--color-background-primary-default);
+  --popover-foreground: var(--color-text-primary);
+  --primary: var(--color-text-primary);
+  --primary-foreground: var(--color-background-primary-default);
+  --secondary: var(--color-background-secondary-default);
+  --secondary-foreground: var(--color-text-primary);
+  --muted: var(--color-background-secondary-default);
+  --muted-foreground: var(--color-text-secondary);
+  --accent: var(--color-background-primary-hover);
+  --accent-foreground: var(--color-text-primary);
+  --border: var(--color-separator-border);
+  --input: var(--color-border-button-default);
+  --sidebar: var(--color-background-full);
+  --sidebar-foreground: var(--color-text-primary);
+  --sidebar-accent: var(--color-background-secondary-default);
+  --sidebar-border: var(--color-separator-border);
+  --radius: 10px;
+}
+
+body {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+}
+
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Result layouts respond to the card, including compact grid and expanded views. */
+.generated-result {
+  container-type: inline-size;
+  container-name: result;
+}
+@container result (min-width: 440px) {
+  .result-comparison-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
