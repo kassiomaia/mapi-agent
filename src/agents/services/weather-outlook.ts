@@ -45,7 +45,7 @@ export async function fetchWeatherOutlook(
         ? Promise.resolve(forecast)
         : fetchForecast(latitude, longitude, MAX_FORECAST_DAYS),
     climateDates.length > 0
-      ? fetchClimateNormals(latitude, longitude, climateDates.map((date) => date.slice(5)))
+      ? fetchClimateNormals(latitude, longitude, climateDates)
       : Promise.resolve(undefined),
   ]);
 

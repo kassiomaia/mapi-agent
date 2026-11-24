@@ -19,7 +19,16 @@ const inputSchema = z.object({
     .string()
     .trim()
     .min(1)
-    .describe("Nome da cidade. Para nomes ambíguos ou traduzidos, use o nome em inglês ou no idioma local, por exemplo: New York, Lisboa"),
+    .describe("Só o nome da cidade, sem estado ou país, por exemplo: New York, Lisboa, Porto"),
+  countryCode: z
+    .string()
+    .trim()
+    .regex(/^[A-Za-z]{2}$/)
+    .optional()
+    .describe(
+      "Código ISO 3166-1 alfa-2 do país da cidade, por exemplo: PT, BR, US. Informe sempre que souber o país, " +
+        "principalmente quando o nome existir em vários países (Porto, Santiago, Córdoba, Valencia)",
+    ),
   startDate: z.iso.date().optional().describe("Primeiro dia do período, no formato AAAA-MM-DD. Padrão: hoje"),
   endDate: z.iso.date().optional().describe("Último dia do período, no formato AAAA-MM-DD, até 31 dias depois do início. Padrão: 7 dias"),
 });
@@ -34,8 +43,10 @@ async function getForecast(input: GetForecastInput): Promise<WeatherOutlook> {
     throw new Error(`The period can have at most ${MAX_OUTLOOK_DAYS} days`);
   }
 
-  const place = await geocodeCity(input.city);
-  if (!place) throw new Error(`City not found: ${input.city}`);
+  const place = await geocodeCity(input.city, input.countryCode);
+  if (!place) {
+    throw new Error(`City not found: ${input.city}${input.countryCode ? ` (${input.countryCode})` : ""}`);
+  }
 
   const outlook = await fetchWeatherOutlook(place.latitude, place.longitude, start, end);
   return { city: place.name, country: place.country, ...outlook };
@@ -53,7 +64,9 @@ export const getForecastTool = defineTool({
   description:
     "Retorna o tempo esperado em uma cidade para um período de até 31 dias. Para os próximos 16 dias, traz a previsão diária " +
     "(máxima, mínima, chance de chuva). Para datas mais distantes, traz a média histórica dos últimos 10 anos para as mesmas datas, " +
-    "que indica o clima típico, mas não é previsão. O resultado é exibido ao usuário automaticamente.",
+    "que indica o clima típico, mas não é previsão. O resultado é exibido ao usuário automaticamente. " +
+    "Chame uma vez por cidade e período; para comparar cidades, chame uma vez para cada. Se o serviço não responder, a ferramenta " +
+    "já tentou de novo: não repita a chamada, responda com o que tiver.",
   inputSchema,
   execute: getForecast,
   formatOutput,

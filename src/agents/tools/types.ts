@@ -123,6 +123,7 @@ export type FlightSearch = Readonly<{
 
 export type GetForecastInput = Readonly<{
   city: string;
+  countryCode?: string | undefined;
   startDate?: string | undefined;
   endDate?: string | undefined;
 }>;
