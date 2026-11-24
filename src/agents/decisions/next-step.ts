@@ -46,6 +46,8 @@ function systemPrompt(): string {
     "Decida se ela termina oferecendo ao usuário uma ação concreta que o agente consegue executar com estas ferramentas:",
     capabilities,
     "Use apenas uma oferta que esteja escrita na resposta, como 'Quer que eu…?' ou 'Se quiser, posso…'. Nunca crie uma oferta nova nem ofereça algo que o agente já fez nesta resposta.",
+    "offer é false quando a oferta é ver fotos, clima, previsão, passagens, atrações, comida, bairros, dicas ou orçamento de uma cidade " +
+      "que já tem plano completo exibido, segundo o contexto, porque o usuário já viu tudo isso. Ofertas de montar um plano para outra cidade são válidas.",
     "A question deve repetir a oferta da resposta quase com as mesmas palavras, em forma de pergunta de sim ou não.",
     "Se a resposta oferecer várias ações, escolha a principal, normalmente a primeira.",
     "offer é false quando a pergunta principal da resposta é aberta, como 'para onde você quer ir?', ou pede uma informação que só o usuário tem, como datas, orçamento ou preferências, ou quando a oferta depende dessa informação.",

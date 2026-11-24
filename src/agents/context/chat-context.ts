@@ -32,9 +32,16 @@ function cityNamesFromToolCall(toolName: string, input: unknown): ReadonlyArray<
   }
 }
 
+function plannedDestination(input: unknown): string | undefined {
+  if (typeof input !== "object" || input === null) return undefined;
+  const destination = (input as Readonly<Record<string, unknown>>).destination;
+  return typeof destination === "string" ? destination : undefined;
+}
+
 export function createChatContext(): ChatContext {
   const entities = new Map<string, Entity>();
   const turns: Turn[] = [];
+  const plannedCities = new Set<string>();
   let pendingMentions: string[] = [];
 
   function registerEntity(name: string): string {
@@ -51,6 +58,8 @@ export function createChatContext(): ChatContext {
       for (const name of cityNamesFromToolCall(toolName, input)) {
         pendingMentions.push(registerEntity(name));
       }
+      const destination = toolName === "plan_trip" ? plannedDestination(input) : undefined;
+      if (destination) plannedCities.add(registerEntity(destination));
     },
 
     recordTurn(prompt, accepted) {
@@ -60,6 +69,7 @@ export function createChatContext(): ChatContext {
 
     describe() {
       const cityNames = [...entities.values()].map((entity) => entity.name);
+      const plannedNames = [...plannedCities].map((id) => entities.get(id)?.name ?? id);
       const lastAccepted = [...turns].reverse().find((turn) => turn.accepted);
       const lastCities = lastAccepted
         ? lastAccepted.mentions.map((id) => entities.get(id)?.name ?? id)
@@ -71,6 +81,7 @@ export function createChatContext(): ChatContext {
 
       return [
         `Cidades já consultadas nesta conversa: ${cityNames.length > 0 ? cityNames.join(", ") : "nenhuma"}.`,
+        `Cidades com plano completo já exibido (com fotos, clima, passagens, atrações, comida, bairros, dicas e orçamento): ${plannedNames.length > 0 ? plannedNames.join(", ") : "nenhuma"}.`,
         `Cidades da última pergunta aceita: ${lastCities.length > 0 ? lastCities.join(", ") : "nenhuma"}.`,
         "Perguntas aceitas anteriores (mais antigas primeiro):",
         recent.length > 0 ? recent.join("\n") : "(nenhuma)",
