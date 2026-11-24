@@ -32,6 +32,8 @@ Os componentes do kit são copiados para `src/client/components/beui/` (licença
 ## Requisitos
 
 - Node.js 22.9 ou superior (o projeto foi testado com Node 24)
+- Uma chave da API da Anthropic, criada em [console.anthropic.com](https://console.anthropic.com/settings/keys)
+- Opcional: uma chave da API [Tavily](https://tavily.com), para a busca de passagens e o plano de viagem
 
 ## Instalação
 
@@ -40,7 +42,7 @@ npm install
 Copy-Item .env.example .env
 ```
 
-Preencha o `.env` com o provedor escolhido.
+No `.env`, cole a sua chave da API da Anthropic em `ANTHROPIC_API_KEY`. As demais variáveis são opcionais.
 
 ## Execução
 
@@ -112,11 +114,8 @@ Para depurar no WebStorm, use as configurações compartilhadas em `.idea/runCon
 
 | Variável | Função | Padrão |
 | --- | --- | --- |
-| `ANTHROPIC_PROVIDER` | `anthropic` ou `bedrock` | `anthropic` |
-| `ANTHROPIC_API_KEY` | Chave da API direta | obrigatória no provedor `anthropic` |
-| `AWS_REGION` | Região do Bedrock | obrigatória no provedor `bedrock` |
-| `AWS_BEARER_TOKEN_BEDROCK` | Token do Bedrock | cadeia padrão da AWS, se ausente |
-| `ANTHROPIC_MODEL` | Modelo usado | `claude-haiku-5-5` ou `global.anthropic.claude-haiku-5-5` |
+| `ANTHROPIC_API_KEY` | Chave da API da Anthropic | obrigatória |
+| `ANTHROPIC_MODEL` | Modelo usado | `claude-haiku-5-5` |
 | `AGENT_MAX_STEPS` | Limite de passos do loop | `8` |
 | `PORT` | Porta do servidor HTTP e WebSocket | `3000` |
 | `TAVILY` | Chave da API Tavily, usada na busca de passagens | sem chave, a ferramenta `search_flights` responde com erro |
@@ -248,7 +247,7 @@ src/
   agents/                   lógica do agente, sem nenhuma dependência de interface
     agent.ts                loop agêntico com limite de passos
     chat.ts                 sessão de conversa (histórico, contexto e guardrail)
-    client.ts               criação do cliente (API direta ou Bedrock)
+    client.ts               criação do cliente da API da Anthropic
     config.ts               leitura e validação das variáveis de ambiente
     types.ts                tipos do agente
     context/                contexto da conversa como entidades (cidades e turnos)

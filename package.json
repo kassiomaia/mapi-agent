@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Mapi, agente pessoal de planejamento de férias com a API da Anthropic (Bedrock ou API direta), em TypeScript com Node.js",
+  "description": "Mapi, agente pessoal de planejamento de férias com a API da Anthropic, em TypeScript com Node.js",
   "license": "MIT",
   "scripts": {
     "build:client": "node --import tsx scripts/build-client.ts && tailwindcss -i src/client/styles/globals.css -o public/build/app.css --minify",

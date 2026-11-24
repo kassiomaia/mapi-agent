@@ -42,7 +42,7 @@ On top of the tools, the chat has a few interactive pieces:
 ## Requirements
 
 - Node.js 22.9 or later (tested with Node 24)
-- A Claude API key, or access to Claude on Amazon Bedrock
+- An Anthropic API key, created at [console.anthropic.com](https://console.anthropic.com/settings/keys)
 - Optional: a [Tavily](https://tavily.com) API key for flight searches and trip plans
 
 ## Getting started
@@ -52,7 +52,7 @@ npm install
 cp .env.example .env
 ```
 
-Fill in `.env` with your provider and keys, then start the app:
+Paste your Anthropic API key into `ANTHROPIC_API_KEY` in `.env` (the other variables are optional), then start the app:
 
 ```bash
 npm start
@@ -116,11 +116,8 @@ To debug it in WebStorm, use the shared run configurations in `.idea/runConfigur
 
 | Variable | Purpose | Default |
 | --- | --- | --- |
-| `ANTHROPIC_PROVIDER` | `anthropic` (Claude API) or `bedrock` (Amazon Bedrock) | `anthropic` |
-| `ANTHROPIC_API_KEY` | Claude API key | required for `anthropic` |
-| `AWS_REGION` | Bedrock region | required for `bedrock` |
-| `AWS_BEARER_TOKEN_BEDROCK` | Bedrock API key | default AWS credential chain if unset |
-| `ANTHROPIC_MODEL` | Model to use | `claude-haiku-5-5` or `global.anthropic.claude-haiku-5-5` |
+| `ANTHROPIC_API_KEY` | Anthropic API key | required |
+| `ANTHROPIC_MODEL` | Model to use | `claude-haiku-5-5` |
 | `AGENT_MAX_STEPS` | Step limit of the agentic loop | `8` |
 | `PORT` | HTTP and WebSocket port | `3000` |
 | `TAVILY` | Tavily API key, used by `search_flights` and `plan_trip` | without it, flight search returns an error |
@@ -186,7 +183,7 @@ src/
   agents/               agent logic, with no interface dependencies
     agent.ts            agentic loop with step limit
     chat.ts             conversation session (history, context and guardrail)
-    client.ts           model client (Claude API or Bedrock)
+    client.ts           Anthropic API client
     config.ts           environment variable parsing and validation
     context/            conversation context as entities (cities and turns)
     decisions/          extracts the Yes/No next step from an answer

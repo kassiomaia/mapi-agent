@@ -20,7 +20,9 @@ export function createClient(
 
   const apiKey = env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    throw new Error("Set ANTHROPIC_API_KEY in the .env file");
+    throw new Error(
+      "Set ANTHROPIC_API_KEY in the .env file: copy .env.example to .env and paste your key from https://console.anthropic.com/settings/keys",
+    );
   }
   return new Anthropic({ apiKey });
 }
